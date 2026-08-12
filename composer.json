@@ -12,6 +12,12 @@
         }
     },
     "scripts": {
+        "db:migrate": [
+            "@php database/migrate.php"
+        ],
+        "db:check": [
+            "@php tests/database.php"
+        ],
         "check": [
             "@php tests/run.php"
         ]

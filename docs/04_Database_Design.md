@@ -45,11 +45,13 @@ Example:
 
 The production database may be created through Hostinger hPanel / phpMyAdmin, but the authoritative schema history remains in the Git repository.
 
+The CLI migration runner discovers versioned `.sql` files, applies only migrations not already recorded, and records each successful migration in the internal `schema_migrations` table. Migration execution is always explicit and is not part of normal web application boot.
+
 ---
 
 # 3. Core Tables
 
-Initial database scope:
+The initial domain/application database scope consists of these seven tables:
 
 - `admins`
 - `brands`
@@ -64,6 +66,18 @@ Optional later table:
 - `contact_requests` only if Frigo Sistem explicitly wants inquiries stored inside the application
 
 No orders, carts, customers, payments, inventory, reviews, or wishlists are required.
+
+## Internal infrastructure table: schema_migrations
+
+`schema_migrations` is migration infrastructure, not a business/domain table, and exists in addition to the seven application tables above.
+
+| Column | Type | Rules |
+|---|---|---|
+| id | BIGINT UNSIGNED | PK, auto increment |
+| migration | VARCHAR(255) | unique, not null |
+| applied_at | DATETIME | not null |
+
+The runner records a migration only after its SQL completes successfully. Already-recorded migrations are skipped. The runner never drops or recreates application tables automatically.
 
 ---
 

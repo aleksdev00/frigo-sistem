@@ -8,9 +8,13 @@ Lightweight PHP 8.4 application for the Frigo Sistem website modernization.
 2. Copy `.env.example` to `.env` and set local values.
 3. Run `composer install`.
 4. Start the development server with `php -S localhost:8000 -t public`.
-5. Open `http://localhost:8000`.
+5. Apply the local database schema explicitly with `composer db:migrate`.
+6. Verify the database schema and constraints with `composer db:check`.
+7. Open `http://localhost:8000`.
 
-The homepage does not connect to MySQL. Database credentials are prepared for later phases; no schema exists yet.
+The homepage does not connect to MySQL during normal application boot. Database migrations run only through the explicit CLI command above and use the configured `.env` credentials.
+
+For a database whose application schema predates migration tracking, first verify the schema and then run `php database/migrate.php --baseline` once. Baseline mode is explicit and records discovered migrations without executing their SQL.
 
 ## Checks
 
