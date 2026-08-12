@@ -13,6 +13,7 @@ final readonly class Request
         public string $clientIp = '',
         public array $query = [],
         public array $attributes = [],
+        public array $files = [],
     )
     {
     }
@@ -29,12 +30,14 @@ final readonly class Request
             is_array($_POST) ? $_POST : [],
             (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
             is_array($_GET) ? $_GET : [],
+            [],
+            is_array($_FILES) ? $_FILES : [],
         );
     }
 
     public function withAttributes(array $attributes): self
     {
-        return new self($this->method, $this->path, $this->input, $this->clientIp, $this->query, $attributes);
+        return new self($this->method, $this->path, $this->input, $this->clientIp, $this->query, $attributes, $this->files);
     }
 
     public static function normalizePath(string $path): string

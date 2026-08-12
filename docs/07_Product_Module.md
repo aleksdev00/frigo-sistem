@@ -320,3 +320,13 @@ A product is considered correctly implemented when:
 - hidden state is respected everywhere
 - SEO metadata is generated correctly
 - view analytics do not expose raw personal identifiers
+
+---
+
+# 18. Phase 5 Image and Specification Decisions
+
+Source images are limited to 10 MB and 10,000 pixels on either side. JPEG, PNG, and WebP are detected with `finfo`, decoded with GD, optionally corrected for JPEG EXIF orientation, resized only when the long edge exceeds 2,200 pixels, and re-encoded as WebP at quality 82. Smaller images are not upscaled. Only the re-encoded output is retained.
+
+Files use 32-character cryptographically random hexadecimal names under `public/uploads/products/{product-id}/`; MySQL stores only paths relative to `public`. The first image becomes main when no main image exists. Main selection, deletion/promotion, and ordering are transactional. Product deletion first commits the database cascade and then removes known physical files; cleanup failures are logged without exposing paths to the owner.
+
+Specifications use a validate-first, transactional replace-all strategy. Fully empty rows are ignored, partially empty or overlong rows reject the entire submission, and accepted rows receive normalized zero-based `sort_order` values. Existing rows are not deleted until every submitted row passes validation.

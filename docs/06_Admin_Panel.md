@@ -365,3 +365,11 @@ The admin panel is ready when one administrator can safely:
 - log out
 
 without editing application files or database rows manually.
+
+---
+
+# 16. Phase 5 Owner Workflow
+
+Product creation remains intentionally two-step: the owner first saves valid basic product data, then is redirected to the edit page where images and specifications can be added. This guarantees that a product ID exists before filesystem storage is used and prevents an image failure from discarding otherwise valid product data.
+
+The edit page provides multiple-image upload, a neutral no-image placeholder, main-image selection, simple up/down ordering, deletion, and dynamic specification rows. Specification rows are saved separately from basic data so validation errors in one section do not overwrite another section.

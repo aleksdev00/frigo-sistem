@@ -353,3 +353,7 @@ Production is not approved until:
 - HTTPS is active
 - production errors are not displayed
 - critical security tests pass
+
+## Phase 5 upload limits and processing
+
+The application enforces a 10 MB limit per source image independently of PHP configuration and rejects source dimensions above 10,000 × 10,000 pixels. It ignores browser MIME and original filename/extension, accepts only `finfo`-identified JPEG/PNG/WebP that GD can decode, and stores only WebP output re-encoded by GD. Output filenames are generated with `random_bytes`; submitted paths are never used. The uploads `.htaccess` disables script handlers and denies common executable suffixes for Apache 2.2 and 2.4, providing defense in depth in addition to content validation and re-encoding.

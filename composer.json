@@ -27,7 +27,8 @@
         "check": [
             "@php tests/run.php",
             "@php tests/auth.php",
-            "@php tests/phase4.php"
+            "@php tests/phase4.php",
+            "@php -d extension=fileinfo -d extension=gd -d extension=exif tests/phase5.php"
         ]
     },
     "config": {

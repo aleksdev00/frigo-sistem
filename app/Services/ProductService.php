@@ -11,7 +11,7 @@ use App\Validation\ValidationResult;
 
 final readonly class ProductService
 {
-    public function __construct(private ProductRepository $products,private BrandRepository $brands,private CategoryRepository $categories,private SlugService $slugs) {}
+    public function __construct(private ProductRepository $products,private BrandRepository $brands,private CategoryRepository $categories,private SlugService $slugs,private ?ProductImageService $images=null) {}
     public function validate(array $input,?int $id=null): ValidationResult
     {
         $name=$this->text($input['name']??'');
@@ -28,6 +28,11 @@ final readonly class ProductService
         return new ValidationResult($data,$errors);
     }
     public function create(array $data):int{return $this->products->create($data);}public function update(int $id,array $data):void{$this->products->update($id,$data);}
+    public function delete(int $id):bool
+    {
+        $paths=$this->products->deleteWithImagePaths($id); if ($paths===null) return false;
+        $this->images?->cleanupFiles($paths,$id); return true;
+    }
     private function uniqueSlug(string $base):string
     {
         if($base===''||!$this->products->slugExists($base))return $base;

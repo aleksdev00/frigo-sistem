@@ -45,6 +45,17 @@ final readonly class ProductRepository
     }
     public function setStatus(int $id,bool $active): bool { $s=$this->pdo->prepare('UPDATE products SET is_active=:active,updated_at=CURRENT_TIMESTAMP WHERE id=:id'); $s->execute(['active'=>(int)$active,'id'=>$id]); return $s->rowCount()>0; }
     public function delete(int $id): bool { $s=$this->pdo->prepare('DELETE FROM products WHERE id=:id'); $s->execute(['id'=>$id]); return $s->rowCount()>0; }
+    public function deleteWithImagePaths(int $id): ?array
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $paths=$this->pdo->prepare('SELECT image_path FROM product_images WHERE product_id=:id FOR UPDATE'); $paths->execute(['id'=>$id]);
+            $files=array_column($paths->fetchAll(),'image_path');
+            $delete=$this->pdo->prepare('DELETE FROM products WHERE id=:id'); $delete->execute(['id'=>$id]);
+            if ($delete->rowCount()!==1) { $this->pdo->rollBack(); return null; }
+            $this->pdo->commit(); return $files;
+        } catch (\Throwable $exception) { if ($this->pdo->inTransaction()) $this->pdo->rollBack(); throw $exception; }
+    }
     public function counts(): array
     {
         $row=$this->pdo->query('SELECT COUNT(*) AS total,COALESCE(SUM(is_active=1),0) AS active,COALESCE(SUM(is_active=0),0) AS hidden FROM products')->fetch();
