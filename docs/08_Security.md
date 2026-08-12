@@ -276,6 +276,8 @@ The system must avoid creating an unbounded database table or easy denial-of-ser
 
 After repeated failures, impose increasing delay or temporary lockout.
 
+Phase 3 uses the `login_throttles` MySQL table so enforcement works across sessions and PHP workers. It records separate HMAC-SHA-256 identifiers for normalized usernames and client IPs, keyed with the environment-only `APP_KEY`; raw usernames and IP addresses are not retained in this table. Five failures in a 15-minute window produce a 15-minute block. Successful login clears the matching identifiers. Stale rows older than two days are opportunistically removed in batches of at most 100, preventing unbounded cleanup work during a request.
+
 ---
 
 # 17. Database Security

@@ -12,6 +12,8 @@ Lightweight PHP 8.4 application for the Frigo Sistem website modernization.
 6. Verify the database schema and constraints with `composer db:check`.
 7. Open `http://localhost:8000`.
 
+Set `APP_KEY` to a random value of at least 32 characters (for example, generated with `php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"`). Create or intentionally replace the initial administrator with `php database/admin.php create [username]`; the command prompts for and confirms a password without writing plaintext to disk or output.
+
 The homepage does not connect to MySQL during normal application boot. Database migrations run only through the explicit CLI command above and use the configured `.env` credentials.
 
 For a database whose application schema predates migration tracking, first verify the schema and then run `php database/migrate.php --baseline` once. Baseline mode is explicit and records discovered migrations without executing their SQL.

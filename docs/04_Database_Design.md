@@ -65,6 +65,10 @@ Optional later table:
 
 - `contact_requests` only if Frigo Sistem explicitly wants inquiries stored inside the application
 
+Security infrastructure table:
+
+- `login_throttles` stores bounded, keyed hashes used to slow repeated login failures; it never stores raw IP addresses, usernames, or passwords
+
 No orders, carts, customers, payments, inventory, reviews, or wishlists are required.
 
 ## Internal infrastructure table: schema_migrations
@@ -100,6 +104,10 @@ Notes:
 - never store a plaintext password
 - one account is sufficient for the initial version
 - username uniqueness must be enforced by the database
+
+## Infrastructure table: login_throttles
+
+This Phase 3 table persists login throttling across PHP sessions and shared-hosting workers. Its primary key is an HMAC-SHA-256 identifier derived separately from the normalized username and client IP using `APP_KEY`; source values are not stored. Rows contain only a failure count, attempt timestamps, and an optional block expiry. Successful authentication clears matching rows. Attempts outside the configured window reset the count, and stale rows older than two days are opportunistically deleted in bounded batches.
 
 ---
 

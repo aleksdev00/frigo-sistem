@@ -18,8 +18,12 @@
         "db:check": [
             "@php tests/database.php"
         ],
+        "admin:create": [
+            "@php database/admin.php create"
+        ],
         "check": [
-            "@php tests/run.php"
+            "@php tests/run.php",
+            "@php tests/auth.php"
         ]
     },
     "config": {

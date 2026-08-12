@@ -16,6 +16,7 @@ $expectedTables = [
     'admins',
     'brands',
     'categories',
+    'login_throttles',
     'product_images',
     'product_specifications',
     'product_views',
@@ -66,6 +67,7 @@ try {
 
     $expectedIndexes = [
         'admins' => ['PRIMARY', 'uq_admins_username'],
+        'login_throttles' => ['PRIMARY', 'idx_login_throttles_updated_at'],
         'brands' => ['PRIMARY', 'uq_brands_name', 'uq_brands_slug'],
         'categories' => ['PRIMARY', 'uq_categories_name', 'uq_categories_slug'],
         'products' => ['PRIMARY', 'idx_products_brand_id', 'idx_products_category_id', 'idx_products_code', 'idx_products_is_active', 'uq_products_slug'],

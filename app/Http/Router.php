@@ -10,6 +10,7 @@ final class Router
 {
     /** @var array<string, array<string, callable>> */
     private array $routes = [];
+    private $adminGuard = null;
 
     public function get(string $path, callable $handler): void
     {
@@ -21,8 +22,23 @@ final class Router
         $this->routes[strtoupper($method)][Request::normalizePath($path)] = $handler;
     }
 
+    public function protectAdminWith(callable $guard): void
+    {
+        $this->adminGuard = $guard;
+    }
+
     public function dispatch(Request $request): Response
     {
+        if ($request->path !== '/admin/login'
+            && ($request->path === '/admin' || str_starts_with($request->path, '/admin/'))
+            && $this->adminGuard !== null
+        ) {
+            $guardResponse = ($this->adminGuard)($request);
+            if ($guardResponse instanceof Response) {
+                return $guardResponse;
+            }
+        }
+
         $methodRoutes = $this->routes[$request->method] ?? [];
         $handler = $methodRoutes[$request->path] ?? null;
 
