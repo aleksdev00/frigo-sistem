@@ -1,0 +1,23 @@
+{
+    "name": "frigo-sistem/website",
+    "description": "Lightweight PHP foundation for the Frigo Sistem website.",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@php tests/run.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
