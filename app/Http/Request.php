@@ -11,6 +11,8 @@ final readonly class Request
         public string $path,
         public array $input = [],
         public string $clientIp = '',
+        public array $query = [],
+        public array $attributes = [],
     )
     {
     }
@@ -26,7 +28,13 @@ final readonly class Request
             self::normalizePath(is_string($path) ? $path : '/'),
             is_array($_POST) ? $_POST : [],
             (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+            is_array($_GET) ? $_GET : [],
         );
+    }
+
+    public function withAttributes(array $attributes): self
+    {
+        return new self($this->method, $this->path, $this->input, $this->clientIp, $this->query, $attributes);
     }
 
     public static function normalizePath(string $path): string

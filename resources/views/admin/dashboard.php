@@ -1,13 +1,5 @@
-<?php
-/** @var string $csrfToken */
-/** @var string $username */
-?>
-<section class="boot-card" aria-labelledby="admin-title">
-    <p class="status">Admin authenticated</p>
-    <h1 id="admin-title">Welcome, <?= htmlspecialchars($username, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></h1>
-    <p>This temporary page verifies Phase 3 authentication. Catalog administration arrives in Phase 4.</p>
-    <form method="post" action="/admin/logout">
-        <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-        <button type="submit">Log out</button>
-    </form>
-</section>
+<?php $e=static fn(mixed $v):string=>htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8'); ?>
+<div class="page-heading"><div><p class="eyebrow">Catalog administration</p><h1>Dashboard</h1><p>Welcome, <?= $e($username) ?>.</p></div><a class="button" href="/admin/products/create">Add product</a></div>
+<?php if($flash):?><p class="flash flash-<?= $e($flash['type']) ?>" role="status"><?= $e($flash['message']) ?></p><?php endif;?>
+<section class="stats" aria-label="Catalog totals"><article><strong><?= $e($counts['total']) ?></strong><span>Total products</span></article><article><strong><?= $e($counts['active']) ?></strong><span>Active products</span></article><article><strong><?= $e($counts['hidden']) ?></strong><span>Hidden products</span></article><article><strong><?= $e($brandCount) ?></strong><span>Brands</span></article><article><strong><?= $e($categoryCount) ?></strong><span>Categories</span></article></section>
+<section class="panel"><h2>Recent products</h2><?php if($recent===[]):?><p>No products yet.</p><?php else:?><div class="table-wrap"><table><thead><tr><th>Name</th><th>Status</th><th>Updated</th></tr></thead><tbody><?php foreach($recent as $p):?><tr><td><a href="/admin/products/<?= $e($p['id']) ?>/edit"><?= $e($p['name']) ?></a></td><td><span class="badge <?= (int)$p['is_active']===1?'active':'hidden' ?>"><?= (int)$p['is_active']===1?'Active':'Hidden' ?></span></td><td><?= $e($p['updated_at']) ?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></section>

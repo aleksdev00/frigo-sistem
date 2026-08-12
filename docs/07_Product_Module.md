@@ -290,6 +290,8 @@ Each product must support:
 
 Product content should be useful and specific rather than copied mechanically from manufacturer pages.
 
+The Phase 4 owner interface does not expose slug or SEO fields. On creation, the application generates a unique Serbian-aware slug from the product name. Ordinary product edits preserve that slug even when the name changes. Nullable `seo_title` and `seo_description` columns remain developer-level overrides; when absent, future public product pages should derive metadata automatically from trusted product data. The default title pattern is `{Product Name} klima | Frigo Sistem Niš`, while the description is assembled and length-bounded from the available product, brand, and category names. Public metadata rendering remains part of the later public product/SEO phases.
+
 ---
 
 # 16. Product URL Changes

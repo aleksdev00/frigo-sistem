@@ -18,12 +18,16 @@
         "db:check": [
             "@php tests/database.php"
         ],
+        "db:seed": [
+            "@php database/seed.php"
+        ],
         "admin:create": [
             "@php database/admin.php create"
         ],
         "check": [
             "@php tests/run.php",
-            "@php tests/auth.php"
+            "@php tests/auth.php",
+            "@php tests/phase4.php"
         ]
     },
     "config": {

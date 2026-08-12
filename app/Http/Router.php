@@ -8,7 +8,7 @@ use App\View\View;
 
 final class Router
 {
-    /** @var array<string, array<string, callable>> */
+    /** @var array<string, list<array{path: string, pattern: string, handler: callable}>> */
     private array $routes = [];
     private $adminGuard = null;
 
@@ -19,7 +19,14 @@ final class Router
 
     public function add(string $method, string $path, callable $handler): void
     {
-        $this->routes[strtoupper($method)][Request::normalizePath($path)] = $handler;
+        $path = Request::normalizePath($path);
+        $pattern = preg_quote($path, '#');
+        $pattern = preg_replace('#\\\\\{([a-zA-Z_][a-zA-Z0-9_]*)\\\\\}#', '(?P<$1>[1-9][0-9]*)', $pattern);
+        $this->routes[strtoupper($method)][] = [
+            'path' => $path,
+            'pattern' => '#^' . $pattern . '$#D',
+            'handler' => $handler,
+        ];
     }
 
     public function protectAdminWith(callable $guard): void
@@ -39,15 +46,29 @@ final class Router
             }
         }
 
-        $methodRoutes = $this->routes[$request->method] ?? [];
-        $handler = $methodRoutes[$request->path] ?? null;
+        $handler = null;
+        $routeRequest = $request;
+        foreach ($this->routes[$request->method] ?? [] as $route) {
+            if (!preg_match($route['pattern'], $request->path, $matches)) {
+                continue;
+            }
+            $attributes = [];
+            foreach ($matches as $name => $value) {
+                if (is_string($name)) {
+                    $attributes[$name] = (int) $value;
+                }
+            }
+            $handler = $route['handler'];
+            $routeRequest = $request->withAttributes($attributes);
+            break;
+        }
 
         if ($handler === null) {
             $view = new View(dirname(__DIR__, 2) . '/resources/views');
             return Response::html($view->render('errors/404', ['title' => 'Page not found', 'appName' => 'Frigo Sistem']), 404);
         }
 
-        $response = $handler($request);
+        $response = $handler($routeRequest);
         if (!$response instanceof Response) {
             throw new \LogicException('Route handlers must return an HTTP response.');
         }
