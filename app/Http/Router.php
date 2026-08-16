@@ -21,7 +21,12 @@ final class Router
     {
         $path = Request::normalizePath($path);
         $pattern = preg_quote($path, '#');
-        $pattern = preg_replace('#\\\\\{([a-zA-Z_][a-zA-Z0-9_]*)\\\\\}#', '(?P<$1>[1-9][0-9]*)', $pattern);
+        $pattern = preg_replace_callback(
+            '#\\\\\{([a-zA-Z_][a-zA-Z0-9_]*)\\\\\}#',
+            static fn (array $match): string => '(?P<' . $match[1] . '>'
+                . ($match[1] === 'slug' ? '[a-z0-9]+(?:-[a-z0-9]+)*' : '[1-9][0-9]*') . ')',
+            $pattern,
+        );
         $this->routes[strtoupper($method)][] = [
             'path' => $path,
             'pattern' => '#^' . $pattern . '$#D',
@@ -55,7 +60,7 @@ final class Router
             $attributes = [];
             foreach ($matches as $name => $value) {
                 if (is_string($name)) {
-                    $attributes[$name] = (int) $value;
+                    $attributes[$name] = $name === 'slug' ? $value : (int) $value;
                 }
             }
             $handler = $route['handler'];

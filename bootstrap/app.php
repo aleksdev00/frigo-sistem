@@ -8,6 +8,7 @@ use App\Controllers\BrandController;
 use App\Controllers\CategoryController;
 use App\Controllers\DashboardController;
 use App\Controllers\ProductController;
+use App\Controllers\PublicCatalogController;
 use App\Controllers\AnalyticsController;
 use App\Foundation\Application;
 use App\Foundation\Config;
@@ -22,6 +23,7 @@ use App\Repositories\LoginThrottleRepository;
 use App\Repositories\BrandRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\PublicCatalogRepository;
 use App\Repositories\ProductImageRepository;
 use App\Repositories\ProductSpecificationRepository;
 use App\Repositories\AnalyticsRepository;
@@ -109,8 +111,12 @@ $productSpecificationService = new ProductSpecificationService($productSpecifica
 $products = new ProductController($productRepository, $brandRepository, $categoryRepository, $productImageRepository, $productSpecificationRepository, new ProductService($productRepository, $brandRepository, $categoryRepository, $slugService, $productImageService), $productImageService, $productSpecificationService, $adminPage, $flash);
 $dashboard = new DashboardController($productRepository, $brandRepository, $categoryRepository, $analyticsRepository, $auth, $adminPage);
 $analytics = new AnalyticsController($analyticsRepository, $adminPage);
+$publicCatalog = new PublicCatalogController(new PublicCatalogRepository($pdo), $views, $config);
 
 $router->get('/', [$home, 'index']);
+$router->get('/klima-uredjaji', [$publicCatalog, 'index']);
+$router->get('/brend/{slug}', [$publicCatalog, 'brand']);
+$router->get('/kategorija/{slug}', [$publicCatalog, 'category']);
 $router->get('/admin/login', [$admin, 'showLogin']);
 $router->add('POST', '/admin/login', [$admin, 'login']);
 $router->get('/admin', [$dashboard, 'index']);
