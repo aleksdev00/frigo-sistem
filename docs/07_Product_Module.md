@@ -273,6 +273,8 @@ Optional duplicate reduction can use:
 
 Analytics is approximate business insight, not billing-grade measurement.
 
+Phase 6 records only views for existing products. The future public product controller will pass a random, session-scoped visitor token to `ProductViewService::recordView()`. The service stores only an HMAC-SHA-256 hash of that token and suppresses another view of the same product from that token for 30 minutes. It neither accepts nor stores an IP address. Analytics retention is indefinite for now; it can be reviewed if the modest event table becomes large.
+
 ---
 
 # 15. Product SEO

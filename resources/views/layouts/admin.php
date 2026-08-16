@@ -15,7 +15,7 @@
 </head>
 <body>
     <?php if (!empty($showAdminNav)): ?>
-    <header class="admin-header"><a class="admin-brand" href="/admin">Frigo Sistem</a><nav aria-label="Admin navigation"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/brands">Brands</a><a href="/admin/categories">Categories</a></nav><form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="link-button" type="submit">Logout</button></form></header>
+    <header class="admin-header"><a class="admin-brand" href="/admin">Frigo Sistem</a><nav aria-label="Admin navigation"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/brands">Brands</a><a href="/admin/categories">Categories</a><a href="/admin/analytics">Analytics</a></nav><form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="link-button" type="submit">Logout</button></form></header>
     <?php endif; ?>
     <main class="<?= !empty($showAdminNav) ? 'admin-page' : 'page' ?>"><?= $content ?></main>
 </body>

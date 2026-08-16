@@ -308,6 +308,8 @@ Time ranges may include:
 
 The dashboard/chart should not require third-party visitor tracking.
 
+Phase 6 uses a small dependency-free canvas chart loaded only by the existing admin JavaScript. The 7-day and 30-day views include zero-view dates; all-time results group recorded dates and are capped at 3,660 daily points to keep the response bounded. Invalid range values safely fall back to 30 days.
+
 ---
 
 # 13. Validation
