@@ -1,4 +1,1 @@
-<section class="boot-card">
-    <h1>Something went wrong</h1>
-    <p>Please try again later.</p>
-</section>
+<section class="error-state" aria-labelledby="page-title"><p class="error-state__code">500</p><h1 id="page-title">Došlo je do greške</h1><p>Stranicu trenutno nije moguće prikazati. Pokušajte ponovo kasnije.</p><a class="button button--primary" href="/">Nazad na početnu</a></section>

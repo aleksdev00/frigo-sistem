@@ -31,7 +31,8 @@
             "@php -d extension=fileinfo -d extension=gd -d extension=exif tests/phase5.php",
             "@php tests/phase6.php",
             "@php tests/phase7.php",
-            "@php tests/phase8.php"
+            "@php tests/phase8.php",
+            "@php tests/phase9.php"
         ]
     },
     "config": {

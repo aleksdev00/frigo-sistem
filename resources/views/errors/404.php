@@ -1,4 +1,1 @@
-<section class="boot-card">
-    <h1>Page not found</h1>
-    <p>The requested page does not exist.</p>
-</section>
+<section class="error-state" aria-labelledby="page-title"><p class="error-state__code">404</p><h1 id="page-title">Stranica nije pronađena</h1><p>Tražena stranica ne postoji ili više nije dostupna.</p><a class="button button--primary" href="/klima-uredjaji">Pogledajte ponudu</a></section>
