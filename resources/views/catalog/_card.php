@@ -16,10 +16,10 @@ $alt = trim((string) ($product['image_alt'] ?? '')) ?: (string) $product['name']
     <div class="product-card__body">
         <?php if ((int) $product['is_featured'] === 1): ?><span class="catalog-badge">Izdvojeno</span><?php endif; ?>
         <p class="product-card__taxonomy"><a href="/brend/<?= $e($product['brand_slug']) ?>"><?= $e($product['brand_name']) ?></a> · <a href="/kategorija/<?= $e($product['category_slug']) ?>"><?= $e($product['category_name']) ?></a></p>
-        <h2><?= $e($product['name']) ?></h2>
+        <h2><a href="/klima-uredjaji/<?= $e($product['slug']) ?>"><?= $e($product['name']) ?></a></h2>
         <?php if (trim((string) ($product['code'] ?? '')) !== ''): ?><p class="product-card__code">Model: <?= $e($product['code']) ?></p><?php endif; ?>
         <?php if (trim((string) ($product['short_description'] ?? '')) !== ''): ?><p class="product-card__description"><?= $e($product['short_description']) ?></p><?php endif; ?>
         <?php if ($product['price'] !== null): ?><p class="product-card__price"><?= number_format((float) $product['price'], 2, ',', '.') ?> RSD</p><?php endif; ?>
-        <span class="button disabled" aria-disabled="true" title="Detaljna stranica biće dostupna u sledećoj fazi">Detaljnije — uskoro</span>
+        <a class="button" href="/klima-uredjaji/<?= $e($product['slug']) ?>" aria-label="Detaljnije o proizvodu <?= $e($product['name']) ?>">Detaljnije</a>
     </div>
 </article>
