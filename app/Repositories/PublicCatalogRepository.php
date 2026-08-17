@@ -45,6 +45,22 @@ final readonly class PublicCatalogRepository
             . 'WHERE p.brand_id=b.id AND p.is_active=1) ORDER BY b.name')->fetchAll();
     }
 
+    /** @return array<int, array<string, mixed>> */
+    public function featuredProducts(int $limit = 4): array
+    {
+        $limit = max(1, min(12, $limit));
+        $sql = 'SELECT p.id,p.name,p.slug,p.code,p.price,p.short_description,p.is_featured,p.updated_at,'
+            . 'b.name AS brand_name,b.slug AS brand_slug,c.name AS category_name,c.slug AS category_slug,'
+            . 'pi.image_path,pi.alt_text AS image_alt,pi.width AS image_width,pi.height AS image_height '
+            . 'FROM products p JOIN brands b ON b.id=p.brand_id AND b.is_active=1 '
+            . 'JOIN categories c ON c.id=p.category_id AND c.is_active=1 '
+            . 'LEFT JOIN product_images pi ON pi.id=(SELECT selected.id FROM product_images selected '
+            . 'WHERE selected.product_id=p.id ORDER BY selected.is_main DESC,selected.sort_order ASC,selected.id ASC LIMIT 1) '
+            . 'WHERE p.is_active=1 AND p.is_featured=1 ORDER BY p.updated_at DESC,p.id DESC LIMIT ' . $limit;
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
     public function activeCategories(): array
     {
         return $this->pdo->query('SELECT c.name,c.slug FROM categories c WHERE c.is_active=1 '

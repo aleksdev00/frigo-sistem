@@ -194,6 +194,8 @@ MAIL_PASSWORD
 MAIL_ENCRYPTION
 MAIL_FROM_ADDRESS
 MAIL_FROM_NAME
+CONTACT_TO_ADDRESS
+MAIL_TRANSPORT
 ```
 
 Exact variable names are implementation details but must remain consistent.
@@ -204,6 +206,26 @@ Production:
 APP_ENV=production
 APP_DEBUG=false
 ```
+
+## Phase 10 mail configuration
+
+Local development should keep `MAIL_TRANSPORT=log`; messages are written to the non-public, Git-ignored `storage/mail/` preview directory and no SMTP connection is made.
+
+Hostinger production must configure an authenticated mailbox and set:
+
+```text
+MAIL_TRANSPORT=smtp
+MAIL_HOST=<Hostinger SMTP hostname>
+MAIL_PORT=<Hostinger SMTP port, commonly 465 or 587>
+MAIL_USERNAME=<full authenticated mailbox address>
+MAIL_PASSWORD=<mailbox password or app-specific password>
+MAIL_ENCRYPTION=<tls or ssl, matching the selected port>
+MAIL_FROM_ADDRESS=<authenticated Frigo Sistem sender address>
+MAIL_FROM_NAME=Frigo Sistem
+CONTACT_TO_ADDRESS=<mailbox that receives website inquiries>
+```
+
+The exact hostname, port, encryption mode, mailbox, and password must be copied from the active Hostinger email account rather than guessed. Ensure PHP can write `storage/mail/`, `storage/cache/contact-rate-limits/`, and `storage/logs/`, while none of those directories are web-accessible. Optional throttle settings are `CONTACT_RATE_LIMIT`, `CONTACT_RATE_WINDOW_SECONDS`, and `CONTACT_MIN_FILL_SECONDS`.
 
 ---
 

@@ -23,3 +23,7 @@ For a database whose application schema predates migration tracking, first verif
 Run `composer check` and `composer validate --strict`.
 
 Production must point its document root at `public/`, use `APP_ENV=production` and `APP_DEBUG=false`, and keep `.env`, source, configuration, and logs outside public access.
+
+## Contact mail
+
+Development defaults to `MAIL_TRANSPORT=log`, which writes non-public previews to `storage/mail/` without sending email. Production must use `MAIL_TRANSPORT=smtp` and configure the Hostinger SMTP variables documented in `.env.example` and `docs/10_Deployment.md`. Contact inquiries are mailed only; they are not stored in MySQL.

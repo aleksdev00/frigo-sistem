@@ -258,6 +258,12 @@ PHPMailer or another mature SMTP-capable library may be used through Composer.
 
 Database storage of contact messages is not required by default.
 
+Phase 10 uses one `ContactController` for general and product inquiries. Product context is submitted as a bounded slug and resolved again through the active-only public product repository. `ContactService` owns validation and delivery data, while `ContactMailer` separates the PHPMailer SMTP transport from the local development preview transport.
+
+The local `log` transport writes restricted mail previews under `storage/mail/` and never connects to SMTP. Production must explicitly select `smtp`; incomplete SMTP configuration fails closed. Successful submissions use POST/Redirect/GET.
+
+Contact throttling uses short-lived timestamp lists in `storage/cache/contact-rate-limits/`. Filenames are HMAC hashes of the client identifier using `APP_KEY`; raw IP addresses and inquiry content are not stored in throttle state.
+
 ---
 
 # 11. Analytics Architecture

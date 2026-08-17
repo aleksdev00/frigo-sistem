@@ -11,6 +11,7 @@ use App\Controllers\ProductController;
 use App\Controllers\PublicCatalogController;
 use App\Controllers\PublicProductController;
 use App\Controllers\AnalyticsController;
+use App\Controllers\ContactController;
 use App\Foundation\Application;
 use App\Foundation\Config;
 use App\Foundation\Environment;
@@ -41,6 +42,11 @@ use App\Services\ProductSpecificationService;
 use App\Services\SlugService;
 use App\Services\ProductSeoService;
 use App\Services\ProductViewService;
+use App\Services\ContactAntiSpam;
+use App\Services\ContactRateLimiter;
+use App\Services\ContactService;
+use App\Services\DevelopmentContactMailer;
+use App\Services\SmtpContactMailer;
 use App\Support\AdminPage;
 use App\Support\Flash;
 use App\View\View;
@@ -59,6 +65,7 @@ Environment::load($basePath . '/.env');
 $config = new Config([
     'app' => require $basePath . '/config/app.php',
     'database' => require $basePath . '/config/database.php',
+    'mail' => require $basePath . '/config/mail.php',
 ]);
 
 date_default_timezone_set((string) $config->get('app.timezone', 'Europe/Belgrade'));
@@ -89,8 +96,9 @@ if (strlen($appKey) < 32) {
 
 $views = new View($basePath . '/resources/views');
 $router = new Router();
-$home = new HomeController($views, $config);
 $pdo = (new Database($config))->connect();
+$publicCatalogRepository = new PublicCatalogRepository($pdo);
+$home = new HomeController($publicCatalogRepository, $views, $config);
 $auth = new AuthService(
     new AdminRepository($pdo),
     new LoginThrottleRepository($pdo),
@@ -115,14 +123,38 @@ $productSpecificationService = new ProductSpecificationService($productSpecifica
 $products = new ProductController($productRepository, $brandRepository, $categoryRepository, $productImageRepository, $productSpecificationRepository, new ProductService($productRepository, $brandRepository, $categoryRepository, $slugService, $productImageService), $productImageService, $productSpecificationService, $adminPage, $flash);
 $dashboard = new DashboardController($productRepository, $brandRepository, $categoryRepository, $analyticsRepository, $auth, $adminPage);
 $analytics = new AnalyticsController($analyticsRepository, $adminPage);
-$publicCatalog = new PublicCatalogController(new PublicCatalogRepository($pdo), $views, $config);
-$publicProduct = new PublicProductController(new PublicProductRepository($pdo), new ProductViewService($analyticsRepository, $appKey), new ProductSeoService(), $views, $config, $logger);
+$publicCatalog = new PublicCatalogController($publicCatalogRepository, $views, $config);
+$publicProductRepository = new PublicProductRepository($pdo);
+$publicProduct = new PublicProductController($publicProductRepository, new ProductViewService($analyticsRepository, $appKey), new ProductSeoService(), $views, $config, $logger);
+$mailConfig = (array) $config->get('mail', []);
+$mailTransport = strtolower((string) ($mailConfig['transport'] ?? 'log'));
+if ((string) $config->get('app.env', 'production') === 'production' && $mailTransport !== 'smtp') {
+    throw new RuntimeException('Production contact mail requires MAIL_TRANSPORT=smtp.');
+}
+if (!in_array($mailTransport, ['log', 'smtp'], true)) {
+    throw new RuntimeException('MAIL_TRANSPORT must be log or smtp.');
+}
+$contactMailer = $mailTransport === 'smtp'
+    ? new SmtpContactMailer($mailConfig)
+    : new DevelopmentContactMailer($basePath . '/storage/mail');
+$contact = new ContactController(
+    $publicProductRepository,
+    new ContactService($contactMailer),
+    new ContactAntiSpam($appKey, (int) ($mailConfig['minimum_fill_seconds'] ?? 3)),
+    new ContactRateLimiter($basePath . '/storage/cache/contact-rate-limits', $appKey, (int) ($mailConfig['rate_limit'] ?? 5), (int) ($mailConfig['rate_window_seconds'] ?? 3600)),
+    $csrf,
+    $views,
+    $config,
+    $logger,
+);
 
 $router->get('/', [$home, 'index']);
 $router->get('/klima-uredjaji', [$publicCatalog, 'index']);
 $router->get('/klima-uredjaji/{slug}', [$publicProduct, 'show']);
 $router->get('/brend/{slug}', [$publicCatalog, 'brand']);
 $router->get('/kategorija/{slug}', [$publicCatalog, 'category']);
+$router->get('/kontakt', [$contact, 'show']);
+$router->add('POST', '/kontakt', [$contact, 'submit']);
 $router->get('/admin/login', [$admin, 'showLogin']);
 $router->add('POST', '/admin/login', [$admin, 'login']);
 $router->get('/admin', [$dashboard, 'index']);

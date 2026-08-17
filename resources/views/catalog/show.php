@@ -30,12 +30,12 @@ $alt = static fn (array $image): string => trim((string) ($image['alt_text'] ?? 
             <?php if (trim((string)($product['short_description']??''))!==''): ?><p class="product-summary__intro"><?= nl2br($e($product['short_description'])) ?></p><?php endif; ?>
             <p class="product-summary__price"><?= $product['price'] !== null ? number_format((float)$product['price'], 2, ',', '.') . ' RSD' : 'Cena na upit' ?></p>
             <p class="product-summary__price-caption">Za dodatne informacije o uređaju obratite se Frigo Sistemu.</p>
-            <a class="button button--primary" href="#informacije">Više informacija</a>
+            <a class="button button--primary" href="/kontakt?product=<?= $e(rawurlencode((string) $product['slug'])) ?>">Pošaljite upit</a>
         </div>
     </section>
     <?php if (trim((string)($product['description']??''))!==''): ?><section class="content-section product-description" aria-labelledby="description-title"><div class="section-heading"><p class="eyebrow">Detalji</p><h2 id="description-title">Opis proizvoda</h2></div><div class="prose"><?= nl2br($e($product['description'])) ?></div></section><?php endif; ?>
     <?php if ($specifications !== []): ?><section class="content-section" aria-labelledby="specifications-title"><div class="section-heading"><p class="eyebrow">Karakteristike</p><h2 id="specifications-title">Tehničke specifikacije</h2></div><dl class="specification-list"><?php foreach ($specifications as $specification): ?><div><dt><?= $e($specification['name']) ?></dt><dd><?= $e($specification['value']) ?></dd></div><?php endforeach; ?></dl></section><?php endif; ?>
-    <aside class="cta-panel" id="informacije" aria-labelledby="cta-title"><div><p class="eyebrow">Frigo Sistem</p><h2 id="cta-title">Zainteresovani ste za ovaj uređaj?</h2><p>Kontakt stranica i slanje upita biće povezani u narednoj fazi. Do tada možete nastaviti pregled ponude.</p></div><a class="button button--secondary" href="/klima-uredjaji">Pogledajte ponudu</a></aside>
+    <aside class="cta-panel" id="informacije" aria-labelledby="cta-title"><div><p class="eyebrow">Frigo Sistem</p><h2 id="cta-title">Zainteresovani ste za ovaj uređaj?</h2><p>Pošaljite nam upit i navedite šta vam je potrebno. Podaci o izabranom proizvodu biće automatski pridruženi poruci.</p></div><a class="button button--secondary" href="/kontakt?product=<?= $e(rawurlencode((string) $product['slug'])) ?>">Pošaljite upit</a></aside>
     <?php if ($relatedProducts !== []): ?><section class="content-section related-products" aria-labelledby="related-title"><div class="section-heading"><p class="eyebrow">Izdvajamo</p><h2 id="related-title">Slični proizvodi</h2></div><div class="product-grid"><?php foreach ($relatedProducts as $product) require __DIR__ . '/_card.php'; ?></div></section><?php endif; ?>
 </div>
 <script type="application/ld+json"><?= $json($structuredProduct) ?></script>

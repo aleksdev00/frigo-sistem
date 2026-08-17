@@ -216,6 +216,8 @@ If abuse becomes significant, a CAPTCHA-like solution can be added later.
 
 Do not store inquiries in MySQL unless there is a real operational requirement.
 
+Phase 10 combines the shared session CSRF token, an off-screen honeypot, an HMAC-signed form-start timestamp with a configurable minimum fill time, and a bounded one-hour submission throttle. Throttle identifiers are HMAC-hashed with `APP_KEY`; raw IP addresses are not retained. The visitor email is validated and may be used only as PHPMailer's `Reply-To`; the configured Frigo Sistem mailbox remains the sender. User input never controls arbitrary headers.
+
 ---
 
 # 13. HTTP Security Headers

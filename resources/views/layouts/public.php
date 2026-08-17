@@ -12,6 +12,7 @@ $catalogCurrent = $requestPath === '/klima-uredjaji'
     || str_starts_with($requestPath, '/klima-uredjaji/')
     || str_starts_with($requestPath, '/brend/')
     || str_starts_with($requestPath, '/kategorija/');
+$contactCurrent = $requestPath === '/kontakt';
 ?>
 <!doctype html>
 <html lang="sr-Latn">
@@ -47,6 +48,7 @@ $catalogCurrent = $requestPath === '/klima-uredjaji'
             <nav class="primary-nav" id="primary-navigation" aria-label="Glavna navigacija" data-navigation>
                 <a href="/"<?= $requestPath === '/' ? ' aria-current="page"' : '' ?>>Početna</a>
                 <a href="/klima-uredjaji"<?= $catalogCurrent ? ' aria-current="page"' : '' ?>>Klima uređaji</a>
+                <a href="/kontakt"<?= $contactCurrent ? ' aria-current="page"' : '' ?>>Kontakt</a>
             </nav>
         </div>
     </header>
@@ -54,7 +56,7 @@ $catalogCurrent = $requestPath === '/klima-uredjaji'
     <footer class="site-footer">
         <div class="site-footer__inner">
             <div><a class="footer-brand" href="/">FRIGO SISTEM</a><p>Prodaja, ugradnja i servis klima uređaja.</p></div>
-            <nav aria-label="Navigacija u podnožju"><h2>Navigacija</h2><a href="/">Početna</a><a href="/klima-uredjaji">Klima uređaji</a></nav>
+            <nav aria-label="Navigacija u podnožju"><h2>Navigacija</h2><a href="/">Početna</a><a href="/klima-uredjaji">Klima uređaji</a><a href="/kontakt">Kontakt</a></nav>
         </div>
         <div class="site-footer__bottom"><small>&copy; <?= date('Y') ?> Frigo Sistem</small></div>
     </footer>

@@ -55,7 +55,7 @@ $test('Product detail renders gallery, specifications, breadcrumbs and Phase 9 C
         'structuredBreadcrumbs'=>[['name'=>'Početna','url'=>'https://example.test/'],['name'=>'Klima','url'=>'https://example.test/klima']],
         'pageScript'=>'/assets/js/product-gallery.js',
     ]);
-    $assert(str_contains($body,'data-gallery-main') && str_contains($body,'class="specification-list"') && str_contains($body,'class="breadcrumbs"') && str_contains($body,'class="cta-panel"') && !str_contains($body,'href="/kontakt'));
+    $assert(str_contains($body,'data-gallery-main') && str_contains($body,'class="specification-list"') && str_contains($body,'class="breadcrumbs"') && str_contains($body,'class="cta-panel"') && str_contains($body,'href="/kontakt?product=bezbedna-klima"'));
 });
 $test('Public error pages use safe consistent states', static function () use ($assert,$view):void {
     $notFound=$view->render('errors/404',['title'=>'Stranica nije pronađena','appName'=>'Frigo Sistem']);
