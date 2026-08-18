@@ -13,6 +13,7 @@ use App\Security\Csrf;
 use App\Services\ContactAntiSpam;
 use App\Services\ContactRateLimiter;
 use App\Services\ContactService;
+use App\Services\SeoService;
 use App\View\View;
 use Throwable;
 
@@ -64,12 +65,10 @@ final readonly class ContactController
 
     private function page(Request $request, ?array $product = null, array $values = [], array $errors = [], ?string $globalError = null, bool $sent = false, int $status = 200): Response
     {
-        $baseUrl = rtrim((string) $this->config->get('app.url', 'http://localhost'), '/');
+        $seo = new SeoService($this->config);
         return new Response($this->view->render('contact/index', [
-            'title' => 'Kontakt | Frigo Sistem Niš',
-            'metaDescription' => 'Kontaktirajte Frigo Sistem za informacije o klima uređajima, ugradnji i servisu.',
-            'canonical' => $baseUrl . '/kontakt',
-            'robots' => $request->query === [] ? 'index, follow' : 'noindex, follow',
+            ...$seo->page('/kontakt', 'Kontakt | Frigo Sistem Niš', 'Kontaktirajte Frigo Sistem u vezi sa klima uređajima, ugradnjom i servisom. Pošaljite upit putem kontakt forme.', $request->query === []),
+            'structuredData' => [$seo->breadcrumbs([['name' => 'Početna', 'path' => '/'], ['name' => 'Kontakt', 'path' => '/kontakt']])],
             'appName' => (string) $this->config->get('app.name', 'Frigo Sistem'),
             'csrfToken' => $this->csrf->token(),
             'antiSpam' => $this->antiSpam->fields(),

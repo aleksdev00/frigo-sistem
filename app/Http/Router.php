@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Services\LegacyRedirectService;
 use App\View\View;
 
 final class Router
@@ -11,6 +12,7 @@ final class Router
     /** @var array<string, list<array{path: string, pattern: string, handler: callable}>> */
     private array $routes = [];
     private $adminGuard = null;
+    private ?LegacyRedirectService $legacyRedirects = null;
 
     public function get(string $path, callable $handler): void
     {
@@ -39,8 +41,17 @@ final class Router
         $this->adminGuard = $guard;
     }
 
+    public function useLegacyRedirects(LegacyRedirectService $redirects): void
+    {
+        $this->legacyRedirects = $redirects;
+    }
+
     public function dispatch(Request $request): Response
     {
+        if ($request->method === 'GET' && $this->legacyRedirects !== null) {
+            $destination = $this->legacyRedirects->destination($request->path);
+            if ($destination !== null) return Response::redirect($destination, 301);
+        }
         if ($request->path !== '/admin/login'
             && ($request->path === '/admin' || str_starts_with($request->path, '/admin/'))
             && $this->adminGuard !== null
@@ -70,7 +81,7 @@ final class Router
 
         if ($handler === null) {
             $view = new View(dirname(__DIR__, 2) . '/resources/views');
-            return Response::html($view->render('errors/404', ['title' => 'Page not found', 'appName' => 'Frigo Sistem']), 404);
+            return Response::html($view->render('errors/404', ['title' => 'Stranica nije pronađena | Frigo Sistem', 'metaDescription' => 'Tražena stranica nije pronađena.', 'robots' => 'noindex, follow', 'appName' => 'Frigo Sistem']), 404);
         }
 
         $response = $handler($routeRequest);

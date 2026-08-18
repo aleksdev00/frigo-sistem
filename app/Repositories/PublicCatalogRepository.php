@@ -78,6 +78,24 @@ final readonly class PublicCatalogRepository
         return $this->findTaxonomy('categories', 'category_id', $slug);
     }
 
+    public function sitemapBrands(): array
+    {
+        return $this->pdo->query('SELECT b.slug FROM brands b WHERE b.is_active=1 AND EXISTS '
+            . '(SELECT 1 FROM products p JOIN categories c ON c.id=p.category_id AND c.is_active=1 WHERE p.brand_id=b.id AND p.is_active=1) ORDER BY b.slug')->fetchAll();
+    }
+
+    public function sitemapCategories(): array
+    {
+        return $this->pdo->query('SELECT c.slug FROM categories c WHERE c.is_active=1 AND EXISTS '
+            . '(SELECT 1 FROM products p JOIN brands b ON b.id=p.brand_id AND b.is_active=1 WHERE p.category_id=c.id AND p.is_active=1) ORDER BY c.slug')->fetchAll();
+    }
+
+    public function sitemapProducts(): array
+    {
+        return $this->pdo->query('SELECT p.slug FROM products p JOIN brands b ON b.id=p.brand_id AND b.is_active=1 '
+            . 'JOIN categories c ON c.id=p.category_id AND c.is_active=1 WHERE p.is_active=1 ORDER BY p.slug')->fetchAll();
+    }
+
     private function findTaxonomy(string $table, string $foreignKey, string $slug): ?array
     {
         $description = $table === 'categories' ? 't.description,' : '';

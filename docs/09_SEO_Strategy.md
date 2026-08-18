@@ -443,3 +443,23 @@ After launch:
 - important pages inspected
 - index coverage monitored
 - rankings/queries reviewed over time
+# Phase 11 production SEO implementation
+
+Public metadata is generated server-side through `SeoService`. `APP_URL` is the only trusted origin for canonical, Open Graph, structured-data, sitemap, and robots URLs; request Host headers are never used. Clean public pages are `index, follow` only in production. Any query state on catalog, product, or contact pages uses the clean route as canonical and is `noindex, follow`. Non-production metadata is globally `noindex, nofollow`.
+
+The homepage targets the natural Niš intent for sales, installation, servicing, and maintenance without adding hidden copy. Product metadata continues to honor database `seo_title` and `seo_description` overrides through `ProductSeoService`. Brand and category overrides are also preserved, with database-name-based fallbacks.
+
+Open Graph uses `website` for general pages and `product` for product details. A product image is emitted only when an actual stored image exists. JSON-LD includes a conservative homepage `Organization`, actual product values without offers/reviews/availability, and `BreadcrumbList` data for catalog, product, brand, category, and contact routes. JSON is hex-escaped for safe HTML embedding.
+
+`/sitemap.xml` is generated from active products whose brand and category are active, plus clean static, brand, and category URLs. It contains no query URLs or fabricated modification dates. `/robots.txt` allows public production crawling, disallows `/admin`, and references the sitemap; non-production returns a site-wide disallow.
+
+Verified migration redirects belong in `config/redirects.php` as exact `'/old-path' => '/new-path'` entries. The map is intentionally empty until the legacy crawl is verified. Only local paths are accepted; query/fragment destinations, external URLs, self redirects, and redirect chains fail validation. Incoming query strings are discarded by the exact 301 destination.
+
+## Production SEO checklist
+
+- Set `APP_ENV=production` and an HTTPS canonical `APP_URL` with the final preferred hostname and no path.
+- Crawl/export the current production site, verify every important legacy URL, and populate `config/redirects.php` before cutover.
+- Confirm legal business name, public phone, email, street address, opening hours, and verified social profiles before expanding Organization/LocalBusiness data.
+- Review product names, descriptions, image alt text, brand/category status, and developer SEO overrides.
+- Validate key HTML, JSON-LD, `/sitemap.xml`, `/robots.txt`, 301s, and true 404s in the production-like environment.
+- Submit the sitemap after cutover and monitor indexing and 404 reports without claiming rankings.

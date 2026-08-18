@@ -1,5 +1,7 @@
 # Deployment
 
+> Phase 11 requirement: production must provide the exact public HTTPS origin in `APP_URL` (for example, `https://example.com`, with no path/query/fragment) and `APP_ENV=production`. A localhost, temporary, or staging URL must never be used for production sitemap or canonical output. Development and test environments intentionally prevent indexing. Populate only verified legacy mappings in `config/redirects.php` after crawling the previous site.
+
 ## 1. Overview
 
 This document defines deployment of the Frigo Sistem Website Modernization project to the existing Hostinger shared-hosting environment.

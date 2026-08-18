@@ -1,5 +1,7 @@
 # Testing
 
+Phase 11 coverage is in `tests/phase11.php` and is included in `composer check`. It covers public metadata and H1 behavior, filter noindex rules, overrides and inactive entities, Open Graph and conservative JSON-LD, dynamic sitemap/robots responses, hostile Host isolation, exact safe 301 mappings, and noindex 404 responses.
+
 ## 1. Overview
 
 Testing ensures that the Frigo Sistem website is reliable, secure, usable, SEO-safe, and ready to replace the current production website.

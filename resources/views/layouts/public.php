@@ -24,12 +24,14 @@ $contactCurrent = $requestPath === '/kontakt';
     <meta name="robots" content="<?= $escape($robots) ?>">
     <?php if ($canonical !== null): ?><link rel="canonical" href="<?= $escape($canonical) ?>"><?php endif; ?>
     <?php if ($openGraph !== []): ?>
-    <meta property="og:type" content="product">
+    <meta property="og:type" content="<?= $escape($openGraph['type'] ?? 'website') ?>">
     <meta property="og:title" content="<?= $escape($openGraph['title'] ?? $title) ?>">
     <meta property="og:description" content="<?= $escape($openGraph['description'] ?? $metaDescription) ?>">
     <meta property="og:url" content="<?= $escape($openGraph['url'] ?? $canonical) ?>">
-    <?php if (!empty($openGraph['image'])): ?><meta property="og:image" content="<?= $escape((string)($openGraph['baseUrl'] ?? '') . '/' . ltrim((string)$openGraph['image'], '/')) ?>"><?php endif; ?>
+    <meta property="og:site_name" content="<?= $escape($openGraph['site_name'] ?? $appName) ?>">
+    <?php if (!empty($openGraph['image'])): ?><meta property="og:image" content="<?= $escape($openGraph['image']) ?>"><?php endif; ?>
     <?php endif; ?>
+    <?php foreach (($structuredData ?? []) as $schema): ?><script type="application/ld+json"><?= json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) ?></script><?php endforeach; ?>
     <link rel="stylesheet" href="/assets/css/app.css">
     <script src="/assets/js/public.js" defer></script>
 </head>

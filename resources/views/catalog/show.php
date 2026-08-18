@@ -1,6 +1,5 @@
 <?php
 $e = static fn (mixed $value): string => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-$json = static fn (array $value): string => (string) json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
 $mainImage = $images[0] ?? null;
 $imageUrl = static fn (array $image): string => '/' . ltrim((string) $image['image_path'], '/');
 $alt = static fn (array $image): string => trim((string) ($image['alt_text'] ?? ''));
@@ -38,5 +37,3 @@ $alt = static fn (array $image): string => trim((string) ($image['alt_text'] ?? 
     <aside class="cta-panel" id="informacije" aria-labelledby="cta-title"><div><p class="eyebrow">Frigo Sistem</p><h2 id="cta-title">Zainteresovani ste za ovaj uređaj?</h2><p>Pošaljite nam upit i navedite šta vam je potrebno. Podaci o izabranom proizvodu biće automatski pridruženi poruci.</p></div><a class="button button--secondary" href="/kontakt?product=<?= $e(rawurlencode((string) $product['slug'])) ?>">Pošaljite upit</a></aside>
     <?php if ($relatedProducts !== []): ?><section class="content-section related-products" aria-labelledby="related-title"><div class="section-heading"><p class="eyebrow">Izdvajamo</p><h2 id="related-title">Slični proizvodi</h2></div><div class="product-grid"><?php foreach ($relatedProducts as $product) require __DIR__ . '/_card.php'; ?></div></section><?php endif; ?>
 </div>
-<script type="application/ld+json"><?= $json($structuredProduct) ?></script>
-<script type="application/ld+json"><?= $json(['@context'=>'https://schema.org','@type'=>'BreadcrumbList','itemListElement'=>array_map(static fn(array $item,int $index):array=>['@type'=>'ListItem','position'=>$index+1,'name'=>$item['name'],'item'=>$item['url']],$structuredBreadcrumbs,array_keys($structuredBreadcrumbs))]) ?></script>
