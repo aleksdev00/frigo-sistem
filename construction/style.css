@@ -1,0 +1,219 @@
+:root {
+    color-scheme: light;
+    --primary: #004a99;
+    --primary-dark: #003f80;
+    --accent: #aec8fa;
+    --accent-soft: #edf4ff;
+    --text: #111827;
+    --text-muted: #52606d;
+    --border: #dce7f5;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-width: 320px;
+    margin: 0;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 15% 15%, rgb(174 200 250 / 32%), transparent 26rem),
+        radial-gradient(circle at 90% 90%, rgb(0 74 153 / 10%), transparent 30rem),
+        #fff;
+}
+
+.maintenance-page {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.maintenance-card {
+    position: relative;
+    width: min(100%, 58rem);
+    overflow: hidden;
+    padding: clamp(1.5rem, 5vw, 4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 94%);
+    box-shadow: 0 1.5rem 4rem rgb(0 63 128 / 12%);
+}
+
+.maintenance-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 0.35rem;
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--accent));
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 clamp(2.5rem, 7vw, 5rem);
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+}
+
+.brand-mark {
+    width: 2.6rem;
+    height: 2.6rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.45rem;
+    color: #fff;
+    background: var(--primary);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+}
+
+.air-conditioner {
+    width: min(100%, 20rem);
+    margin: 0 auto clamp(2rem, 5vw, 3rem);
+}
+
+.air-conditioner__unit {
+    position: relative;
+    height: 6.4rem;
+    border: 2px solid var(--primary);
+    border-radius: 1rem 1rem 1.35rem 1.35rem;
+    background: linear-gradient(180deg, #fff 0 70%, var(--accent-soft) 70% 100%);
+    box-shadow: 0 0.8rem 1.8rem rgb(0 74 153 / 12%);
+}
+
+.air-conditioner__unit::before {
+    content: "";
+    position: absolute;
+    top: 1.2rem;
+    left: 1.4rem;
+    width: 5.4rem;
+    height: 0.28rem;
+    border-radius: 999px;
+    background: var(--accent);
+}
+
+.air-conditioner__indicator {
+    position: absolute;
+    top: 1.05rem;
+    right: 1.35rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 0.28rem rgb(174 200 250 / 45%);
+}
+
+.air-conditioner__vent {
+    position: absolute;
+    right: 1.2rem;
+    bottom: 0.75rem;
+    left: 1.2rem;
+    height: 0.65rem;
+    border-radius: 999px;
+    background: repeating-linear-gradient(90deg, var(--primary-dark) 0 0.18rem, transparent 0.18rem 0.55rem);
+    opacity: 0.85;
+}
+
+.air-conditioner__flow {
+    height: 3.2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2.25rem;
+    padding-top: 0.65rem;
+}
+
+.air-conditioner__flow span {
+    width: 0.35rem;
+    height: 2.1rem;
+    border-radius: 999px;
+    background: linear-gradient(var(--accent), transparent);
+    transform: skewX(-14deg);
+}
+
+.air-conditioner__flow span:nth-child(2) {
+    height: 2.6rem;
+    transform: skewX(12deg);
+}
+
+.content {
+    max-width: 44rem;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+}
+
+.supporting-text {
+    max-width: 42rem;
+    margin: 1.5rem auto 0;
+    color: var(--text-muted);
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    line-height: 1.75;
+}
+
+.secondary-text {
+    display: inline-block;
+    margin: 1.75rem 0 0;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    color: var(--primary-dark);
+    background: var(--accent-soft);
+    font-weight: 750;
+}
+
+@media (max-width: 35rem) {
+    .maintenance-card {
+        border-radius: 0.9rem;
+    }
+
+    .brand {
+        margin-bottom: 2.25rem;
+    }
+
+    .air-conditioner {
+        width: min(100%, 15rem);
+    }
+
+    .air-conditioner__unit {
+        height: 5.25rem;
+    }
+
+    .supporting-text {
+        line-height: 1.65;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+    }
+}
