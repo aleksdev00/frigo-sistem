@@ -36,7 +36,8 @@
             "@php tests/phase9.php",
             "@php tests/phase10.php",
             "@php tests/phase10_1.php",
-            "@php tests/phase11.php"
+            "@php tests/phase11.php",
+            "@php tests/phase12.php"
         ]
     },
     "config": {

@@ -11,14 +11,18 @@ use Throwable;
 
 final readonly class Application
 {
-    public function __construct(private Router $router, private ErrorHandler $errors)
+    public function __construct(private Router $router, private ErrorHandler $errors, private bool $production = false)
     {
     }
 
     public function handle(Request $request): Response
     {
         try {
-            return $this->router->dispatch($request);
+            $response = $this->router->dispatch($request);
+            if ($this->production && $request->secure) {
+                $response = $response->withHeaders(['Strict-Transport-Security' => 'max-age=31536000']);
+            }
+            return $response;
         } catch (Throwable $exception) {
             return $this->errors->render($exception);
         }

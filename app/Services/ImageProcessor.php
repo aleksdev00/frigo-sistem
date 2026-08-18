@@ -8,6 +8,7 @@ final class ImageProcessor
 {
     public const MAX_BYTES = 10 * 1024 * 1024;
     public const MAX_SOURCE_DIMENSION = 10000;
+    public const MAX_SOURCE_PIXELS = 40000000;
     public const MAX_LONG_EDGE = 2200;
     public const WEBP_QUALITY = 82;
     private const MIME_TYPES = ['image/jpeg','image/png','image/webp'];
@@ -20,12 +21,14 @@ final class ImageProcessor
         $size=$upload['size']??0; $tmp=$upload['tmp_name']??'';
         if (!is_int($size) || $size<1 || $size>self::MAX_BYTES) throw new ImageProcessingException('Image must be no larger than 10 MB.');
         if (!is_string($tmp) || $tmp==='' || !is_file($tmp)) throw new ImageProcessingException('Uploaded image could not be read.');
+        if (PHP_SAPI !== 'cli' && !is_uploaded_file($tmp)) throw new ImageProcessingException('Uploaded image could not be verified.');
         $mime=(new \finfo(FILEINFO_MIME_TYPE))->file($tmp);
         if (!is_string($mime) || !in_array($mime,self::MIME_TYPES,true)) throw new ImageProcessingException('Only JPEG, PNG, and WebP images are allowed.');
         $info=@getimagesize($tmp);
         if (!is_array($info) || ($info[0]??0)<1 || ($info[1]??0)<1) throw new ImageProcessingException('Image is malformed or cannot be decoded.');
         $width=(int)$info[0]; $height=(int)$info[1];
         if ($width>self::MAX_SOURCE_DIMENSION || $height>self::MAX_SOURCE_DIMENSION) throw new ImageProcessingException('Image dimensions must not exceed 10,000 pixels per side.');
+        if ($width * $height > self::MAX_SOURCE_PIXELS) throw new ImageProcessingException('Image contains too many pixels to process safely.');
         $bytes=@file_get_contents($tmp);
         $source=is_string($bytes)?@imagecreatefromstring($bytes):false;
         if (!$source instanceof \GdImage) throw new ImageProcessingException('Image is malformed or cannot be decoded.');

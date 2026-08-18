@@ -30,6 +30,13 @@ final readonly class AdminRepository
         $statement->execute(['id' => $id]);
     }
 
+    public function isActive(int $id): bool
+    {
+        $statement = $this->pdo->prepare('SELECT 1 FROM admins WHERE id = :id AND is_active = 1 LIMIT 1');
+        $statement->execute(['id' => $id]);
+        return $statement->fetchColumn() !== false;
+    }
+
     public function createOrReplace(string $username, string $passwordHash): bool
     {
         $existing = $this->findByUsername($username);

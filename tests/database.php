@@ -195,7 +195,9 @@ try {
     $pdo->prepare('INSERT INTO product_views (product_id, viewed_at) VALUES (?, ?)')->execute([$productId, $now]);
     $pdo->prepare('DELETE FROM products WHERE id = ?')->execute([$productId]);
     foreach (['product_images', 'product_specifications', 'product_views'] as $childTable) {
-        $count = (int) $pdo->query('SELECT COUNT(*) FROM ' . $childTable)->fetchColumn();
+        $countStatement = $pdo->prepare('SELECT COUNT(*) FROM ' . $childTable . ' WHERE product_id = ?');
+        $countStatement->execute([$productId]);
+        $count = (int) $countStatement->fetchColumn();
         $assert($count === 0, 'Cascade delete failed for ' . $childTable . '.');
     }
     $pdo->rollBack();

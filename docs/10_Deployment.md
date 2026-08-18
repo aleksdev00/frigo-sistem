@@ -1,5 +1,7 @@
 # Deployment
 
+> The concrete Phase 12 Hostinger environment, filesystem, backup, rollback, and safe deployment checklist is maintained in `docs/13_Production_Readiness.md`.
+
 > Phase 11 requirement: production must provide the exact public HTTPS origin in `APP_URL` (for example, `https://example.com`, with no path/query/fragment) and `APP_ENV=production`. A localhost, temporary, or staging URL must never be used for production sitemap or canonical output. Development and test environments intentionally prevent indexing. Populate only verified legacy mappings in `config/redirects.php` after crawling the previous site.
 
 ## 1. Overview

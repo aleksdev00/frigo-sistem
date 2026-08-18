@@ -62,6 +62,10 @@ final readonly class AuthService
         if (!is_array($auth) || !is_int($auth['id'] ?? null) || !is_string($auth['username'] ?? null)) {
             return false;
         }
+        if (!$this->admins->isActive($auth['id'])) {
+            $this->logout();
+            return false;
+        }
         $_SESSION[self::SESSION_KEY]['last_activity_at'] = time();
         return true;
     }

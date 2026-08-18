@@ -75,6 +75,14 @@ $test('Valid login regenerates session and stores minimal auth', static function
     $assert(!array_key_exists('password_hash', $_SESSION['admin_auth']));
 });
 
+$test('Deactivated administrator loses an existing session', static function () use ($assert, $auth, $pdo, $username, $sessions): void {
+    $pdo->prepare('UPDATE admins SET is_active = 0 WHERE username = ?')->execute([$username]);
+    $assert(!$auth->isAuthenticated(), 'A deactivated administrator retained access.');
+    $pdo->prepare('UPDATE admins SET is_active = 1 WHERE username = ?')->execute([$username]);
+    $sessions->start();
+    $assert($auth->attempt($username, 'Secure-Test-9!', '192.0.2.44'), 'Test administrator could not log back in.');
+});
+
 $test('CSRF rejects missing/invalid tokens', static function () use ($assert): void {
     $csrf = new Csrf();
     $token = $csrf->token();
@@ -115,7 +123,7 @@ $test('Login throttling activates after repeated failures', static function () u
 
 $test('Security header baseline is present', static function () use ($assert): void {
     $headers = Response::html('ok')->effectiveHeaders();
-    foreach (['X-Content-Type-Options', 'Referrer-Policy', 'Permissions-Policy', 'Content-Security-Policy'] as $name) {
+    foreach (['X-Content-Type-Options', 'Referrer-Policy', 'Permissions-Policy', 'Content-Security-Policy', 'X-Frame-Options'] as $name) {
         $assert(isset($headers[$name]), $name . ' is missing.');
     }
     $assert(str_contains($headers['Content-Security-Policy'], "frame-ancestors 'none'"));

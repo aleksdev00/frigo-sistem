@@ -14,6 +14,7 @@ final readonly class Request
         public array $query = [],
         public array $attributes = [],
         public array $files = [],
+        public bool $secure = false,
     )
     {
     }
@@ -32,12 +33,14 @@ final readonly class Request
             is_array($_GET) ? $_GET : [],
             [],
             is_array($_FILES) ? $_FILES : [],
+            (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
+                || (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443,
         );
     }
 
     public function withAttributes(array $attributes): self
     {
-        return new self($this->method, $this->path, $this->input, $this->clientIp, $this->query, $attributes, $this->files);
+        return new self($this->method, $this->path, $this->input, $this->clientIp, $this->query, $attributes, $this->files, $this->secure);
     }
 
     public static function normalizePath(string $path): string

@@ -9,12 +9,14 @@ use App\Repositories\ProductImageRepository;
 
 final readonly class ProductImageService
 {
+    private const MAX_FILES_PER_REQUEST = 10;
     public function __construct(private ProductImageRepository $images,private ImageProcessor $processor,private Logger $logger,private string $publicPath) {}
 
     public function upload(int $productId,string $productName,array $files): int
     {
         $uploads=$this->normalize($files);
         if ($uploads===[]) throw new ImageProcessingException('Choose at least one image.');
+        if (count($uploads)>self::MAX_FILES_PER_REQUEST) throw new ImageProcessingException('Upload no more than 10 images at once.');
         $directory=$this->directory($productId);
         if (!is_dir($directory) && !mkdir($directory,0750,true) && !is_dir($directory)) throw new ImageProcessingException('Image storage is unavailable.');
         $stored=[];

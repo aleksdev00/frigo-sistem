@@ -19,6 +19,7 @@ use App\Foundation\Environment;
 use App\Foundation\ErrorHandler;
 use App\Foundation\Logger;
 use App\Foundation\Database;
+use App\Foundation\ProductionConfiguration;
 use App\Http\Router;
 use App\Http\Response;
 use App\Repositories\AdminRepository;
@@ -71,6 +72,8 @@ $config = new Config([
     'mail' => require $basePath . '/config/mail.php',
 ]);
 
+ProductionConfiguration::validate($config);
+
 date_default_timezone_set((string) $config->get('app.timezone', 'Europe/Belgrade'));
 
 $logger = new Logger($basePath . '/storage/logs/app.log');
@@ -81,19 +84,17 @@ $errors = new ErrorHandler(
 );
 $errors->register();
 
+$isProduction = strtolower((string) $config->get('app.env', 'production')) === 'production';
 $isHttps = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
     || (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443;
 $sessions = new SessionManager(
     idleTimeout: (int) $config->get('app.session_idle_timeout', 1800),
-    secureCookie: $isHttps,
+    secureCookie: $isProduction || $isHttps,
 );
 $sessions->start();
 
 $appKey = (string) $config->get('app.key', '');
 if (strlen($appKey) < 32) {
-    if ((string) $config->get('app.env', 'production') === 'production') {
-        throw new RuntimeException('APP_KEY must contain at least 32 characters in production.');
-    }
     $appKey = hash('sha256', $basePath . '|' . (string) $config->get('database.database'));
 }
 
@@ -133,9 +134,6 @@ $publicProductRepository = new PublicProductRepository($pdo);
 $publicProduct = new PublicProductController($publicProductRepository, new ProductViewService($analyticsRepository, $appKey), new ProductSeoService(), $views, $config, $logger);
 $mailConfig = (array) $config->get('mail', []);
 $mailTransport = strtolower((string) ($mailConfig['transport'] ?? 'log'));
-if ((string) $config->get('app.env', 'production') === 'production' && $mailTransport !== 'smtp') {
-    throw new RuntimeException('Production contact mail requires MAIL_TRANSPORT=smtp.');
-}
 if (!in_array($mailTransport, ['log', 'smtp'], true)) {
     throw new RuntimeException('MAIL_TRANSPORT must be log or smtp.');
 }
@@ -197,4 +195,4 @@ $router->protectAdminWith(static fn (): ?Response => $auth->isAuthenticated()
     ? null
     : Response::redirect('/admin/login', 302));
 
-return new Application($router, $errors);
+return new Application($router, $errors, $isProduction);
