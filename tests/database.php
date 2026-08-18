@@ -12,16 +12,18 @@ Environment::load($basePath . '/.env');
 $config = new Config(['database' => require $basePath . '/config/database.php']);
 $databaseName = (string) $config->get('database.database');
 $pdo = (new Database($config))->connect();
-$expectedTables = [
+$expectedApplicationTables = [
     'admins',
     'brands',
     'categories',
-    'login_throttles',
     'product_images',
     'product_specifications',
     'product_views',
     'products',
 ];
+$expectedSecurityTables = ['login_throttles'];
+$expectedTables = array_merge($expectedApplicationTables, $expectedSecurityTables);
+sort($expectedTables);
 $expectedInfrastructureTables = ['schema_migrations'];
 
 $assert = static function (bool $condition, string $message): void {
@@ -54,7 +56,7 @@ try {
     $actualTables = array_values(array_diff($allTables, $expectedInfrastructureTables));
     $assert(
         $actualTables === $expectedTables,
-        'Database tables differ from the expected Phase 2 table set. Actual: ' . json_encode($actualTables),
+        'Database tables differ from the expected application and security table set. Actual: ' . json_encode($actualTables),
     );
     $assert(
         array_values(array_intersect($allTables, $expectedInfrastructureTables)) === $expectedInfrastructureTables,
@@ -203,7 +205,7 @@ try {
     $pdo->rollBack();
 
     echo "PASS: PDO connection uses utf8mb4.\n";
-    echo "PASS: Expected seven-table application schema, infrastructure table, InnoDB, and utf8mb4 collations verified.\n";
+    echo "PASS: Expected Phase 2 application tables, Phase 3 security table, infrastructure table, InnoDB, and utf8mb4 collations verified.\n";
     echo "PASS: Initial migration history and safe repeated runner execution verified.\n";
     echo "PASS: Required indexes and unique constraints verified.\n";
     echo "PASS: Foreign-key definitions, invalid references, RESTRICT, and CASCADE behavior verified.\n";
